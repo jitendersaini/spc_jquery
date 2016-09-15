@@ -1,0 +1,101 @@
+<html>
+<head>
+<script src="jquery-3.1.0.min.js"></script>
+<style>
+.center {
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
+</style>
+</head>
+<body>
+	<fieldset>
+	<legend>Sorting Numbers</legend>
+	<div id="main" class="center">
+		<input type="text" id="inputNum"/>
+		<input type="button" id="myButton" value="Add"/>
+		<input type="button" id="myButton1" value="Clear"/>
+		<hr>
+		<div id="orgArr"></div>
+		<div id="sortedArr"></div>
+		<hr>
+		<fieldset>
+		<legend>Positions</legend>
+		<div id="position" style="margin: auto;width: 50%;"></div>
+		</fieldset>
+	</div>
+	</fieldset>
+</body>
+<script>
+$('#inputNum').keyup(function () { 
+    this.value = this.value.replace(/[^0-9\.]/g,'');
+});
+var orgArray = JSON.parse(localStorage.getItem("orgArray"));
+
+if(orgArray==null || orgArray.length==0) {
+	orgArray = [3, 14, 7,8,23,56,12,4];	
+} 
+</script>
+<script>
+$( "#myButton" ).on( "click", function() {
+  //localStorage.setItem("orgArray", JSON.stringify($('#inputNum').val()));
+  orgArray[orgArray.length] = parseInt($('#inputNum').val());
+  operations();
+});
+$( "#myButton1" ).on( "click", function() {
+  localStorage.removeItem("orgArray");
+  localStorage.setItem("orgArray", JSON.stringify([3, 14, 7,8,23,56,12,4]));
+  defaultDisplay();
+});
+function sort(numArray) {
+	
+
+	
+	//numArray = numArray.sort(function (a, b) {  return a - b;  });	
+	numArray = numArray.sort(function(a,b) {
+  if (isNaN(a) || isNaN(b)) {
+    return a > b ? 1 : -1;
+  }
+  return a - b;
+});
+	return numArray;	
+}
+function display(orgArray,sortedArr) {
+var str = '';
+	for(var i=0;i<orgArray.length;i++) {
+		var item =orgArray[i];
+		var position = orgArray.indexOf(item) - sortedArr.indexOf(item);
+		if(position<0) {
+			str += item +" shifted down by position "+Math.abs(position) +"<br>";
+		} else if(position == 0) {
+			str += item +" remains unchanged <br>";
+		} else {
+			str += item +" shifted up by position "+Math.abs(position)+"<br>";
+		}
+	}
+	$("#orgArr").html("Original Numbers Are==> ["+orgArray+"]");
+	$("#sortedArr").html("Sorted Numbers Are==> ["+sortedArr+"]");
+	
+	
+
+$("#position").html(str);
+}
+</script>
+<script>
+function operations() {
+	
+	localStorage.setItem("orgArray", JSON.stringify(orgArray));
+	
+	display(JSON.parse(localStorage.getItem("orgArray")),sort(JSON.parse(localStorage.getItem("orgArray"))));
+}
+function defaultDisplay() {
+	display(JSON.parse(localStorage.getItem("orgArray")),sort(JSON.parse(localStorage.getItem("orgArray"))));
+}
+operations();
+//localStorage.setItem("lastname", "Smith");
+// Retrieve
+//document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+</script>
+</html>
